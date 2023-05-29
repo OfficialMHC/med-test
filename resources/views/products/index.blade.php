@@ -8,6 +8,19 @@
 
 
 
+    @if (session()->get('message'))
+        <div class="alert alert-success success">
+            <button type="button" class="close" data-dismiss="alert">
+                <i class="ace-icon fa fa-times"></i>
+            </button>
+            <strong>
+                <i class="ace-icon fa fa-check-circle"></i>
+                Success !
+            </strong>
+            {{ session()->get('message') }}
+        </div>
+    @endif
+
 
     
     <div class="card">

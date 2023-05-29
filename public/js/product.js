@@ -3,7 +3,6 @@ var currentIndex = 0;
 var indexs = [];
 
 $(document).ready(function () {
-    addVariantTemplate();
     $("#file-upload").dropzone({
         url: "{{ route('file-upload') }}",
         method: "post",

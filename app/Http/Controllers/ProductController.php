@@ -5,17 +5,34 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Variant;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    public $productService;
+
+
+
+
+
+    public function __construct()
+    {
+        $this->productService = new ProductService;
+    }
+
+
+
+
+
     public function getProductVariants($variant_id)
     {
         return ProductVariant::where('variant_id', $variant_id)->select('variant')->groupBy('variant_id', 'variant')->get();
     }
 
 
-    
+
 
 
     public function index()
@@ -45,6 +62,7 @@ class ProductController extends Controller
                                 }
                             }])
                             ->when(request()->filled('date'), fn ($q) => $q->whereDate('created_at', request('date')))
+                            ->latest('id')
                             ->paginate(10);
 
         $data['variants']   = Variant::query()
@@ -75,7 +93,24 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        // 
+        $request->validate([
+            'product_name'  => 'required|min:2|max:2',
+            'product_sku'   => 'required|min:2|max:2|unique:products,sku',
+        ]);
+
+        try {
+
+            DB::transaction(function () use ($request) {
+                $this->productService->updateOrCreateProduct($request);
+                $this->productService->storeProductVariants($request);
+                $this->productService->storeProductVariantPrices($request);
+            });
+
+            return redirect()->route('product.index')->withMessage('Product has been created successfully');
+
+        } catch (\Exception $ex) {
+            return redirect()->back()->withError($ex->getMessage());
+        }
     }
     
 
