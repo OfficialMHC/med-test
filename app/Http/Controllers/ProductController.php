@@ -94,9 +94,10 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_name'  => 'required|min:2|max:2',
-            'product_sku'   => 'required|min:2|max:2|unique:products,sku',
+            'product_name'  => 'required|min:2|max:255',
+            'product_sku'   => 'required|min:2|max:255|unique:products,sku',
         ]);
+
 
         try {
 
@@ -104,6 +105,7 @@ class ProductController extends Controller
                 $this->productService->updateOrCreateProduct($request);
                 $this->productService->storeProductVariants($request);
                 $this->productService->storeProductVariantPrices($request);
+                $this->productService->storeProductImages($request);
             });
 
             return redirect()->route('product.index')->withMessage('Product has been created successfully');
@@ -142,8 +144,8 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'product_name'  => 'required|min:2|max:2',
-            'product_sku'   => 'required|min:2|max:2|unique:products,sku,' . $id,
+            'product_name'  => 'required|min:2|max:255',
+            'product_sku'   => 'required|min:2|max:255|unique:products,sku,' . $id,
         ]);
 
         try {
@@ -152,6 +154,7 @@ class ProductController extends Controller
                 $this->productService->updateOrCreateProduct($request);
                 $this->productService->storeProductVariants($request);
                 $this->productService->storeProductVariantPrices($request);
+                $this->productService->storeProductImages($request);
             });
 
             return redirect()->route('product.index')->withMessage('Product has been created successfully');
@@ -168,5 +171,14 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+
+
+
+
+    public function fileUpload(Request $request)
+    {
+        dd($request->all());
     }
 }

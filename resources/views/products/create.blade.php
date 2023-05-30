@@ -77,12 +77,12 @@
                     </div>
                     <!-- Media-->
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"><h6
-                                class="m-0 font-weight-bold text-primary">Media</h6></div>
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"><h6 class="m-0 font-weight-bold text-primary">Media</h6></div>
                         <div class="card-body border">
-                            <div id="file-upload" class="dropzone dz-clickable">
+                            <input type="file" name="images[]" multiple>
+                            {{-- <div id="file-upload" class="dropzone dz-clickable">
                                 <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>

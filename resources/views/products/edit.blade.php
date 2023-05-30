@@ -4,6 +4,30 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Edit Product</h1>
     </div>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (session()->get('error'))
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">
+                <i class="ace-icon fa fa-times"></i>
+            </button>
+            <strong>
+                <i class="ace-icon fa fa-times"></i>
+                Error !
+            </strong>
+            {{ session()->get('error') }}
+        </div>
+    @endif
+    
     <form action="{{ route('product.update', $product->id) }}" method="post" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -51,9 +75,10 @@
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"><h6
                                 class="m-0 font-weight-bold text-primary">Media</h6></div>
                         <div class="card-body border">
-                            <div id="file-upload" class="dropzone dz-clickable">
+                            <input type="file" name="images[]" multiple>
+                            {{-- <div id="file-upload" class="dropzone dz-clickable">
                                 <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>

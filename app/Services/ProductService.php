@@ -3,7 +3,9 @@
 
 namespace App\Services;
 
+use Intervention\Image\Facades\Image;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 
@@ -67,6 +69,55 @@ class ProductService
                 'stock'                 => $productPreview['stock'],
                 'product_id'            => optional($this->product)->id,
             ]);
+        }
+    }
+
+
+
+
+
+    public function storeProductImages($request)
+    {
+        foreach($request->images as $image) {
+            $productImage = ProductImage::create([
+                'product_id' => optional($this->product)->id,
+                'file_path' => 'default.png'
+            ]);
+
+            $this->uploadFile($image, $productImage, 'file_path', 'product', 450, 450);
+        }
+    }
+
+
+
+
+    public function uploadFile($file, $model, $database_field_name, $basePath, $width, $height)
+    {
+        if ($file) {
+            try {
+
+                $basePath = 'img/' . $basePath . '/' . date('Y') . '/';
+                $image_name = $model->id . time() . '-' . rand(11111, 999999) . '.' . 'webp';
+
+                if (file_exists($model->$database_field_name) && $model->$database_field_name != '') {
+                    unlink($model->$database_field_name);
+                }
+
+                if (!is_dir($basePath)) {
+                    \File::makeDirectory($basePath, 493, true);
+                }
+
+                Image::make($file->getRealPath())
+                    ->encode('webp', 90)
+                    ->resize($width, $height, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->save($basePath . '/' . $image_name);
+
+                $model->update([$database_field_name => ($basePath . '/' . $image_name)]);
+
+            } catch (\Exception $ex) {}
         }
     }
 }
