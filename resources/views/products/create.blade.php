@@ -89,8 +89,7 @@
                 <!--                Variants-->
                 <div class="col-md-6">
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3"><h6
-                                class="m-0 font-weight-bold text-primary">Variants</h6>
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Variants</h6>
                         </div>
                         <div class="card-body pb-0" id="variant-sections">
                             @if (old('product_variant'))
@@ -180,13 +179,6 @@
 @endsection
 
 @push('page_js')
-    <script type="text/javascript" src="{{ asset('js/product.js') }}"></script>
-
-    @if (!old('product_variant'))
-        <script>
-            $(document).ready(function () {
-                addVariantTemplate();
-            })
-        </script>
-    @endif
+    {{-- <script type="text/javascript" src="{{ asset('js/product.js') }}"></script> --}}
+    @include('products.script')
 @endpush

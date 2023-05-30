@@ -126,10 +126,12 @@ class ProductController extends Controller
 
 
 
-    public function edit(Product $product)
+    public function edit($id)
     {
-        $variants = Variant::all();
-        return view('products.edit', compact('variants'));
+        $data['product'] = Product::with('productVariantPrices')->where('id', $id)->first();
+        $data['productVariants'] = ProductVariant::where(['product_id' => $id])->groupBy('variant_id')->get(['variant_id']);
+
+        return view('products.edit', $data);
     }
     
 
@@ -137,9 +139,26 @@ class ProductController extends Controller
 
 
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'product_name'  => 'required|min:2|max:2',
+            'product_sku'   => 'required|min:2|max:2|unique:products,sku,' . $id,
+        ]);
+
+        try {
+
+            DB::transaction(function () use ($request) {
+                $this->productService->updateOrCreateProduct($request);
+                $this->productService->storeProductVariants($request);
+                $this->productService->storeProductVariantPrices($request);
+            });
+
+            return redirect()->route('product.index')->withMessage('Product has been created successfully');
+
+        } catch (\Exception $ex) {
+            return redirect()->back()->withError($ex->getMessage());
+        }
     }
     
 
